@@ -8,4 +8,7 @@
 #   bin/console debug:router
 
 controllers:
-    resource: routing.controllers
+    resource:
+        path: ../src/UI/Action/
+        namespace: App\UI\Action
+    type: attribute

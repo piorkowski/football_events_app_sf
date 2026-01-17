@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests;
+namespace Tests\Unit;
 
 use App\Legacy\EventHandler;
 use App\Legacy\FileStorage;

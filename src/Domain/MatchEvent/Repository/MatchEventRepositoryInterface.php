@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Event\Repository;
+namespace App\Domain\MatchEvent\Repository;
 
-use App\Domain\Event\MatchEvent;
-use App\Domain\Event\VO\MatchEventId;
+use App\Domain\MatchEvent\MatchEvent;
+use App\Domain\MatchEvent\VO\MatchEventId;
 use App\Domain\Match\VO\MatchId;
 
 interface MatchEventRepositoryInterface

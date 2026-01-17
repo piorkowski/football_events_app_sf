@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Event\VO;
+namespace App\Domain\MatchEvent\VO;
 
 use App\Domain\Shared\ValueObject;
 

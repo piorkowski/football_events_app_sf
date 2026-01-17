@@ -2,10 +2,18 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Event\Validator;
+namespace App\Domain\MatchEvent\Validator;
 
-final class FoulDataValidator implements MatchEventDataValidatorInterface
+use App\Domain\MatchEvent\EventType;
+
+#[AutoconfigureTag('match_event.validator')]
+final class GoalDataValidator implements MatchEventDataValidatorInterface
 {
+    public function supports(string $eventType): bool
+    {
+        return $eventType === EventType::GOAL->value;
+    }
+
     public function validate(array $data): array
     {
         $errors = [];
@@ -18,14 +26,14 @@ final class FoulDataValidator implements MatchEventDataValidatorInterface
             $errors['team_id'] = 'Team ID is required';
         }
 
-        if (empty($data['committed_by'])) {
-            $errors['committed_by'] = 'Committed by player ID is required';
+        if (empty($data['scorer_id'])) {
+            $errors['scorer_id'] = 'Scorer ID is required';
         }
 
         if (!isset($data['minute'])) {
             $errors['minute'] = 'Minute is required';
-        } elseif ($data['minute'] < 0) {
-            $errors['minute'] = 'Minute must be bigger than 0';
+        } elseif ($data['minute'] < 0 || $data['minute'] > 120) {
+            $errors['minute'] = 'Minute must be between 0 and 120';
         }
 
         if (!isset($data['second'])) {

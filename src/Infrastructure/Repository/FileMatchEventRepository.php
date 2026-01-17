@@ -2,13 +2,13 @@
 
 namespace App\Infrastructure\Repository;
 
-use App\Domain\Event\EventType;
-use App\Domain\Event\Foul;
-use App\Domain\Event\Goal;
-use App\Domain\Event\MatchEvent;
-use App\Domain\Event\Repository\MatchEventProjectionRepositoryInterface;
-use App\Domain\Event\Repository\MatchEventRepositoryInterface;
-use App\Domain\Event\VO\MatchEventId;
+use App\Domain\MatchEvent\EventType;
+use App\Domain\MatchEvent\Foul;
+use App\Domain\MatchEvent\Goal;
+use App\Domain\MatchEvent\MatchEvent;
+use App\Domain\MatchEvent\Repository\MatchEventProjectionRepositoryInterface;
+use App\Domain\MatchEvent\Repository\MatchEventRepositoryInterface;
+use App\Domain\MatchEvent\VO\MatchEventId;
 use App\Domain\Match\VO\MatchId;
 use App\Domain\Player\VO\PlayerId;
 use App\Domain\Team\VO\TeamId;

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Event;
+namespace App\Domain\MatchEvent;
 
-use App\Domain\Event\VO\MatchEventId;
+use App\Domain\MatchEvent\VO\MatchEventId;
 use App\Domain\Match\VO\MatchId;
 use App\Domain\Shared\AggregateRoot;
 use App\Domain\Team\VO\TeamId;

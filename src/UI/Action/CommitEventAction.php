@@ -7,10 +7,10 @@ namespace App\UI\Action;
 use App\Application\Command\CommandBusInterface;
 use App\Application\Command\RecordFoulCommand;
 use App\Application\Command\RecordGoalCommand;
+use App\Application\Exception\ValidationException;
 use App\Application\Query\GetMatchEventQuery;
 use App\Application\Query\QueryBusInterface;
-use App\Domain\Event\Exception\MatchEventValidationException;
-use App\Domain\Event\VO\MatchEventId;
+use App\Domain\MatchEvent\VO\MatchEventId;
 use App\UI\DTO\CommitEventDTO;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -35,6 +35,7 @@ final readonly class CommitEventAction
     ): JsonResponse {
         try {
             $this->logger->info('Committing event', ['event' => $eventDTO]);
+            dd($eventDTO);
             switch ($eventDTO->type) {
                 case 'goal':
                     $this->logger->info('Recording goal');
@@ -52,19 +53,19 @@ final readonly class CommitEventAction
                     $this->logger->info('Foul recorded');
                     $this->queryBus->ask(new GetMatchEventQuery($matchEventId));
 
-                    // no break
                 default:
                     $this->logger->info('Unknown event type - %', ['type' => $eventDTO->type]);
             }
 
             return new JsonResponse('Error committing event', Response::HTTP_INTERNAL_SERVER_ERROR);
-        } catch (MatchEventValidationException $e) {
+        } catch (ValidationException $e) {
             return new JsonResponse([
                 'status' => 'error',
                 'message' => 'Validation failed',
                 'errors' => $e->errors,
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         } catch (\Exception $exception) {
+            dd($exception);
             $this->logger->error('Error committing event', ['exception' => $exception]);
 
             return new JsonResponse('Error committing event', Response::HTTP_INTERNAL_SERVER_ERROR);

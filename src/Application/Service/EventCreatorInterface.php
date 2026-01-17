@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Service;
 
-use App\Domain\Event\MatchEvent;
+use App\Domain\MatchEvent\MatchEvent;
 
 interface EventCreatorInterface
 {

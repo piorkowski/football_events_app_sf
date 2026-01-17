@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Event\Repository;
+namespace App\Domain\MatchEvent\Repository;
 
-use App\Domain\Event\MatchEvent;
+use App\Domain\MatchEvent\MatchEvent;
 
 interface MatchEventProjectionRepositoryInterface
 {

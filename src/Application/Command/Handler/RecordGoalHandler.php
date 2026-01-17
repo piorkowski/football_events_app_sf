@@ -5,13 +5,14 @@ declare(strict_types=1);
 namespace App\Application\Command\Handler;
 
 use App\Application\Command\RecordGoalCommand;
-use App\Application\Event\EventBusInterface;
-use App\Domain\Event\Goal;
-use App\Domain\Event\Repository\MatchEventRepositoryInterface;
+use App\Application\Exception\ApplicationException;
+use App\Application\Exception\ValidationException;
+use App\Application\Factory\MatchEventFactoryInterface;
+use App\Application\Validator\MatchEventValidatorInterface;
+use App\Domain\MatchEvent\Goal;
+use App\Domain\MatchEvent\Repository\MatchEventRepositoryInterface;
 use App\Domain\Match\VO\MatchId;
 use App\Domain\Player\VO\PlayerId;
-use App\Domain\Statistics\MatchStatistics;
-use App\Domain\Statistics\StatisticsRepositoryInterface;
 use App\Domain\Team\VO\TeamId;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
@@ -19,39 +20,36 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 final readonly class RecordGoalHandler
 {
     public function __construct(
+        private MatchEventValidatorInterface $validator,
+        private MatchEventFactoryInterface $factory,
         private MatchEventRepositoryInterface $eventRepository,
-        private StatisticsRepositoryInterface $statisticsRepository,
-        private EventBusInterface $eventBus,
     ) {
     }
 
     public function __invoke(RecordGoalCommand $command): Goal
     {
-        $goal = new Goal(
-            id: $command->matchEventId,
-            matchId: new MatchId($command->eventDTO->matchId),
-            teamId: new TeamId($command->eventDTO->teamId),
-            scorerId: new PlayerId($command->eventDTO->scorerId),
-            minute: $command->eventDTO->minute,
-            second: $command->eventDTO->second,
-            assistId: $command->eventDTO->assistId ? new PlayerId($command->eventDTO->assistId) : null
-        );
+        try {
+            $this->validator->validate($command->eventDTO->type, $command->eventDTO->data);
 
-        // Save event
-        $this->eventRepository->save($goal);
+            $goal = $this->factory->createGoal(
+                $command->matchEventId,
+                new MatchId($command->eventDTO->data['match_id']),
+                new TeamId($command->eventDTO->data['team_id']),
+                new PlayerId($command->eventDTO->data['scorer_id']),
+                $command->eventDTO->data['minute'],
+                $command->eventDTO->data['second'],
+                isset($command->eventDTO->data['assist_id'])
+                    ? new PlayerId($command->eventDTO->data['assist_id'])
+                    : null
+            );
 
-        $matchId = new MatchId($command->eventDTO->matchId);
-        $statistics = $this->statisticsRepository->findByMatchId($matchId);
+            $this->eventRepository->save($goal);
 
-        if (null === $statistics) {
-            $statistics = new MatchStatistics($matchId);
+            return $goal;
+        } catch (ValidationException $e) {
+            throw $e;
+        } catch (\Throwable $e) {
+            throw new ApplicationException(previous: $e);
         }
-
-        $statistics->incrementGoals(new TeamId($command->eventDTO->teamId));
-        $this->statisticsRepository->save($statistics);
-
-        $this->eventBus->publish($goal);
-
-        return $goal;
     }
 }

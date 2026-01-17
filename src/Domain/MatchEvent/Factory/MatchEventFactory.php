@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Application\Factory;
+namespace App\Domain\MatchEvent\Factory;
 
+use App\Application\Factory\MatchEventFactoryInterface;
 use App\Domain\MatchEvent\Foul;
 use App\Domain\MatchEvent\Goal;
 use App\Domain\MatchEvent\VO\MatchEventId;
@@ -11,7 +12,7 @@ use App\Domain\Match\VO\MatchId;
 use App\Domain\Player\VO\PlayerId;
 use App\Domain\Team\VO\TeamId;
 
-interface MatchEventFactoryInterface
+class MatchEventFactory implements MatchEventFactoryInterface
 {
     public function createGoal(
         MatchEventId $id,
@@ -21,7 +22,9 @@ interface MatchEventFactoryInterface
         int $minute,
         int $second,
         ?PlayerId $assistId = null,
-    ): Goal;
+    ): Goal {
+        return new Goal($id, $matchId, $teamId, $scorerId, $minute, $second, $assistId);
+    }
 
     public function createFoul(
         MatchEventId $id,
@@ -31,5 +34,7 @@ interface MatchEventFactoryInterface
         ?PlayerId $sufferedBy,
         int $minute,
         int $second,
-    ): Foul;
+    ): Foul {
+        return new Foul($id, $matchId, $teamId, $committedBy, $sufferedBy, $minute, $second);
+    }
 }

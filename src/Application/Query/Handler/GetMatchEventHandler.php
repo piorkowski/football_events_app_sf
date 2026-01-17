@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Application\Query\Handler;
 
 use App\Application\Query\GetMatchEventQuery;
-use App\Domain\Event\MatchEvent;
-use App\Domain\Event\Repository\MatchEventRepositoryInterface;
+use App\Domain\MatchEvent\MatchEvent;
+use App\Domain\MatchEvent\Repository\MatchEventRepositoryInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 

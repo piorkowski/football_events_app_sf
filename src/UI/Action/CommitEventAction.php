@@ -9,6 +9,7 @@ use App\Application\Command\RecordFoulCommand;
 use App\Application\Command\RecordGoalCommand;
 use App\Application\Query\GetMatchEventQuery;
 use App\Application\Query\QueryBusInterface;
+use App\Domain\Event\Exception\MatchEventValidationException;
 use App\Domain\Event\VO\MatchEventId;
 use App\UI\DTO\CommitEventDTO;
 use Psr\Log\LoggerInterface;
@@ -55,9 +56,16 @@ final readonly class CommitEventAction
                 default:
                     $this->logger->info('Unknown event type - %', ['type' => $eventDTO->type]);
             }
+
+            return new JsonResponse('Error committing event', Response::HTTP_INTERNAL_SERVER_ERROR);
+        } catch (MatchEventValidationException $e) {
+            return new JsonResponse([
+                'status' => 'error',
+                'message' => 'Validation failed',
+                'errors' => $e->errors,
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
         } catch (\Exception $exception) {
             $this->logger->error('Error committing event', ['exception' => $exception]);
-            dd($exception);
 
             return new JsonResponse('Error committing event', Response::HTTP_INTERNAL_SERVER_ERROR);
         }

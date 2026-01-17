@@ -26,7 +26,7 @@ final class GoalDataValidator implements MatchEventDataValidatorInterface
             $errors['team_id'] = 'Team ID is required';
         }
 
-        if (empty($data['scorer_id'])) {
+        if (empty($data['scorer_id']) && empty($data['player'])) {
             $errors['scorer_id'] = 'Scorer ID is required';
         }
 

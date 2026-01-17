@@ -2,6 +2,7 @@
 
 namespace App\Infrastructure\Repository;
 
+use App\Domain\Match\VO\MatchId;
 use App\Domain\MatchEvent\EventType;
 use App\Domain\MatchEvent\Foul;
 use App\Domain\MatchEvent\Goal;
@@ -9,7 +10,6 @@ use App\Domain\MatchEvent\MatchEvent;
 use App\Domain\MatchEvent\Repository\MatchEventProjectionRepositoryInterface;
 use App\Domain\MatchEvent\Repository\MatchEventRepositoryInterface;
 use App\Domain\MatchEvent\VO\MatchEventId;
-use App\Domain\Match\VO\MatchId;
 use App\Domain\Player\VO\PlayerId;
 use App\Domain\Team\VO\TeamId;
 use App\Infrastructure\Exception\InfrastructureException;
@@ -48,9 +48,13 @@ final readonly class FileMatchEventRepository implements MatchEventRepositoryInt
     {
         $allEvents = $this->findAll();
 
-        array_filter($allEvents, static function (MatchEvent $event) {
-            return $event;
-        });
+        try {
+            array_filter($allEvents, static function (MatchEvent $event) {
+                return $event;
+            });
+        } catch (\Throwable $e) {
+            throw new InfrastructureException('MatchEvent not found', 0, $e);
+        }
     }
 
     /**

@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace App\Domain\MatchEvent;
 
-use App\Domain\MatchEvent\VO\MatchEventId;
 use App\Domain\Match\VO\MatchId;
+use App\Domain\MatchEvent\Event\GoalScoredEvent;
+use App\Domain\MatchEvent\VO\MatchEventId;
 use App\Domain\Player\VO\PlayerId;
 use App\Domain\Team\VO\TeamId;
 
@@ -22,6 +23,8 @@ final class Goal extends MatchEvent
         public ?\DateTimeInterface $timestamp = new \DateTimeImmutable(),
     ) {
         parent::__construct($id, $matchId, $teamId, $minute, $second, $timestamp);
+
+        $this->raise(new GoalScoredEvent($id, $matchId, $teamId));
     }
 
     public function type(): EventType

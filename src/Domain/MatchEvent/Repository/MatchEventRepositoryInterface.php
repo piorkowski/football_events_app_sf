@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Domain\MatchEvent\Repository;
 
+use App\Domain\Match\VO\MatchId;
 use App\Domain\MatchEvent\MatchEvent;
 use App\Domain\MatchEvent\VO\MatchEventId;
-use App\Domain\Match\VO\MatchId;
 
 interface MatchEventRepositoryInterface
 {

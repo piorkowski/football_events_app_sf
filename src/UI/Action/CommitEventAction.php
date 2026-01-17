@@ -35,24 +35,24 @@ final readonly class CommitEventAction
     ): JsonResponse {
         try {
             $this->logger->info('Committing event', ['event' => $eventDTO]);
-            dd($eventDTO);
             switch ($eventDTO->type) {
                 case 'goal':
                     $this->logger->info('Recording goal');
                     $matchEventId = $this->generateMatchEventId();
                     $this->commandBus->dispatch(new RecordGoalCommand($matchEventId, $eventDTO));
                     $this->logger->info('Goal recorded');
-                    $this->queryBus->ask(new GetMatchEventQuery($matchEventId));
+                    $goal = $this->queryBus->ask(new GetMatchEventQuery($matchEventId));
 
-                    return new JsonResponse('Goal recorded!', Response::HTTP_CREATED);
+                    return new JsonResponse($this->buildResponse($goal), Response::HTTP_CREATED);
 
                 case 'foul':
                     $this->logger->info('Recording foul');
                     $matchEventId = $this->generateMatchEventId();
                     $this->commandBus->dispatch(new RecordFoulCommand($matchEventId, $eventDTO));
                     $this->logger->info('Foul recorded');
-                    $this->queryBus->ask(new GetMatchEventQuery($matchEventId));
+                    $foul = $this->queryBus->ask(new GetMatchEventQuery($matchEventId));
 
+                    return new JsonResponse($this->buildResponse($foul), Response::HTTP_CREATED);
                 default:
                     $this->logger->info('Unknown event type - %', ['type' => $eventDTO->type]);
             }
@@ -65,8 +65,8 @@ final readonly class CommitEventAction
                 'errors' => $e->errors,
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         } catch (\Exception $exception) {
-            dd($exception);
             $this->logger->error('Error committing event', ['exception' => $exception]);
+            dd($exception);
 
             return new JsonResponse('Error committing event', Response::HTTP_INTERNAL_SERVER_ERROR);
         }

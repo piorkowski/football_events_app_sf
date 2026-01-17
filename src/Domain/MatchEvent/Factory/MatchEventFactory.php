@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Domain\MatchEvent\Factory;
 
 use App\Application\Factory\MatchEventFactoryInterface;
+use App\Domain\Match\VO\MatchId;
 use App\Domain\MatchEvent\Foul;
 use App\Domain\MatchEvent\Goal;
 use App\Domain\MatchEvent\VO\MatchEventId;
-use App\Domain\Match\VO\MatchId;
 use App\Domain\Player\VO\PlayerId;
 use App\Domain\Team\VO\TeamId;
 

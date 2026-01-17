@@ -9,10 +9,11 @@ use App\Application\Exception\ApplicationException;
 use App\Application\Exception\ValidationException;
 use App\Application\Factory\MatchEventFactoryInterface;
 use App\Application\Validator\MatchEventValidatorInterface;
+use App\Domain\Match\VO\MatchId;
 use App\Domain\MatchEvent\Foul;
 use App\Domain\MatchEvent\Repository\MatchEventRepositoryInterface;
-use App\Domain\Match\VO\MatchId;
 use App\Domain\Player\VO\PlayerId;
+use App\Domain\Shared\Event\DomainEventDispatcherInterface;
 use App\Domain\Team\VO\TeamId;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
@@ -23,6 +24,7 @@ final readonly class RecordFoulHandler
         private MatchEventRepositoryInterface $eventRepository,
         private MatchEventValidatorInterface $validator,
         private MatchEventFactoryInterface $factory,
+        private DomainEventDispatcherInterface $eventDispatcher,
     ) {
     }
 
@@ -35,7 +37,7 @@ final readonly class RecordFoulHandler
                 id: $command->matchEventId,
                 matchId: new MatchId($command->eventDTO->data['match_id']),
                 teamId: new TeamId($command->eventDTO->data['team_id']),
-                committedBy: new PlayerId($command->eventDTO->data['committedBy']),
+                committedBy: new PlayerId($command->eventDTO->data['committedBy'] ?? $command->eventDTO->data['player']),
                 sufferedBy: isset($command->eventDTO->data['sufferedBy'])
                     ? new PlayerId($command->eventDTO->data['sufferedBy'])
                     : null,
@@ -44,6 +46,7 @@ final readonly class RecordFoulHandler
             );
 
             $this->eventRepository->save($foul);
+            $this->eventDispatcher->dispatchAll($foul->pullDomainEvents());
 
             return $foul;
         } catch (ValidationException $e) {

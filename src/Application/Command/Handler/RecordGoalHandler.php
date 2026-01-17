@@ -9,10 +9,11 @@ use App\Application\Exception\ApplicationException;
 use App\Application\Exception\ValidationException;
 use App\Application\Factory\MatchEventFactoryInterface;
 use App\Application\Validator\MatchEventValidatorInterface;
+use App\Domain\Match\VO\MatchId;
 use App\Domain\MatchEvent\Goal;
 use App\Domain\MatchEvent\Repository\MatchEventRepositoryInterface;
-use App\Domain\Match\VO\MatchId;
 use App\Domain\Player\VO\PlayerId;
+use App\Domain\Shared\Event\DomainEventDispatcherInterface;
 use App\Domain\Team\VO\TeamId;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
@@ -23,6 +24,7 @@ final readonly class RecordGoalHandler
         private MatchEventValidatorInterface $validator,
         private MatchEventFactoryInterface $factory,
         private MatchEventRepositoryInterface $eventRepository,
+        private DomainEventDispatcherInterface $eventDispatcher,
     ) {
     }
 
@@ -35,7 +37,7 @@ final readonly class RecordGoalHandler
                 $command->matchEventId,
                 new MatchId($command->eventDTO->data['match_id']),
                 new TeamId($command->eventDTO->data['team_id']),
-                new PlayerId($command->eventDTO->data['scorer_id']),
+                new PlayerId($command->eventDTO->data['scorer_id'] ?? $command->eventDTO->data['player']),
                 $command->eventDTO->data['minute'],
                 $command->eventDTO->data['second'],
                 isset($command->eventDTO->data['assist_id'])
@@ -44,6 +46,7 @@ final readonly class RecordGoalHandler
             );
 
             $this->eventRepository->save($goal);
+            $this->eventDispatcher->dispatchAll($goal->pullDomainEvents());
 
             return $goal;
         } catch (ValidationException $e) {

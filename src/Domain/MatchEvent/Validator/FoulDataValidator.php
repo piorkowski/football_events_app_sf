@@ -27,7 +27,7 @@ final class FoulDataValidator implements MatchEventDataValidatorInterface
             $errors['team_id'] = 'Team ID is required';
         }
 
-        if (empty($data['committed_by'])) {
+        if (empty($data['committed_by']) && empty($data['player'])) {
             $errors['committed_by'] = 'Committed by player ID is required';
         }
 

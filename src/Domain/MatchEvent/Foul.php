@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace App\Domain\MatchEvent;
 
-use App\Domain\MatchEvent\VO\MatchEventId;
 use App\Domain\Match\VO\MatchId;
+use App\Domain\MatchEvent\Event\FoulCommittedEvent;
+use App\Domain\MatchEvent\VO\MatchEventId;
 use App\Domain\Player\VO\PlayerId;
 use App\Domain\Team\VO\TeamId;
 
@@ -22,6 +23,8 @@ final class Foul extends MatchEvent
         public ?\DateTimeInterface $timestamp = new \DateTimeImmutable(),
     ) {
         parent::__construct($id, $matchId, $teamId, $minute, $this->second, $timestamp);
+
+        $this->raise(new FoulCommittedEvent($id, $matchId, $teamId));
     }
 
     public function type(): EventType
@@ -37,7 +40,7 @@ final class Foul extends MatchEvent
             'match_id' => $this->matchId->value(),
             'team_id' => $this->teamId->value(),
             'committed_by' => $this->committedBy->value(),
-            'suffered_by' => $this->sufferedBy->value(),
+            'suffered_by' => $this->sufferedBy?->value(),
             'minute' => $this->minute,
             'second' => $this->second,
             'timestamp' => $this->timestamp->format('Y-m-d H:i:s'),

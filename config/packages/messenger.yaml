@@ -26,6 +26,9 @@ framework:
             query.bus.statistics:
                 middleware:
                     - validation
+            event.bus:
+                middleware:
+                    - validation
 
 # when@test:
 #    framework:

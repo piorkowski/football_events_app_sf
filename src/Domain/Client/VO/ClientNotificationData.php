@@ -6,16 +6,15 @@ namespace App\Domain\Client\VO;
 
 use App\Domain\Client\ClientNotificationType;
 use App\Domain\Shared\ValueObject;
-use InvalidArgumentException;
 
 final class ClientNotificationData extends ValueObject
 {
     public function __construct(
         private readonly ClientNotificationType $type,
-        private readonly string $value
+        private readonly string $value,
     ) {
         if (empty(trim($value))) {
-            throw new InvalidArgumentException('Notification data cannot be empty');
+            throw new \InvalidArgumentException('Notification data cannot be empty');
         }
     }
 
@@ -39,7 +38,7 @@ final class ClientNotificationData extends ValueObject
 
     public function __toString(): string
     {
-        return $this->type->value . ' - ' . $this->value;
+        return $this->type->value.' - '.$this->value;
     }
 
     public function jsonSerialize(): array

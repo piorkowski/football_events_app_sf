@@ -8,8 +8,6 @@ use App\Domain\Event\VO\MatchEventId;
 use App\Domain\Match\VO\MatchId;
 use App\Domain\Player\VO\PlayerId;
 use App\Domain\Team\VO\TeamId;
-use DateTimeImmutable;
-use DateTimeInterface;
 
 final class Goal extends MatchEvent
 {
@@ -21,7 +19,7 @@ final class Goal extends MatchEvent
         public int $minute,
         public int $second,
         public ?PlayerId $assistId = null,
-        public ?DateTimeInterface $timestamp = new DateTimeImmutable()
+        public ?\DateTimeInterface $timestamp = new \DateTimeImmutable(),
     ) {
         parent::__construct($id, $matchId, $teamId, $minute, $second, $timestamp);
     }

@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace App\Application\Command\Handler;
 
 use App\Application\Command\RecordGoalCommand;
-use App\Application\MessageBus\CommandHandlerInterface;
-use App\Application\MessageBus\EventBusInterface;
+use App\Application\Event\EventBusInterface;
 use App\Domain\Event\Goal;
 use App\Domain\Event\Repository\MatchEventRepositoryInterface;
 use App\Domain\Match\VO\MatchId;
@@ -14,14 +13,17 @@ use App\Domain\Player\VO\PlayerId;
 use App\Domain\Statistics\MatchStatistics;
 use App\Domain\Statistics\StatisticsRepositoryInterface;
 use App\Domain\Team\VO\TeamId;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
-final readonly class RecordGoalHandler implements CommandHandlerInterface
+#[AsMessageHandler]
+final readonly class RecordGoalHandler
 {
     public function __construct(
         private MatchEventRepositoryInterface $eventRepository,
         private StatisticsRepositoryInterface $statisticsRepository,
-        private EventBusInterface             $eventBus
-    ) {}
+        private EventBusInterface $eventBus,
+    ) {
+    }
 
     public function __invoke(RecordGoalCommand $command): Goal
     {
@@ -41,7 +43,7 @@ final readonly class RecordGoalHandler implements CommandHandlerInterface
         $matchId = new MatchId($command->eventDTO->matchId);
         $statistics = $this->statisticsRepository->findByMatchId($matchId);
 
-        if ($statistics === null) {
+        if (null === $statistics) {
             $statistics = new MatchStatistics($matchId);
         }
 

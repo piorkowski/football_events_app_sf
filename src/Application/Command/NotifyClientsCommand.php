@@ -11,7 +11,7 @@ use Symfony\Component\Messenger\Attribute\AsMessage;
 class NotifyClientsCommand implements CommandInterface
 {
     public function __construct(
-        public MatchEventId $matchEventId
-    ) {}
-
+        public MatchEventId $matchEventId,
+    ) {
+    }
 }

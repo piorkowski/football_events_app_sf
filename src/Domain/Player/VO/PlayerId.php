@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Domain\Player\VO;
 
 use App\Domain\Shared\ValueObject;
-use InvalidArgumentException;
 
 final class PlayerId extends ValueObject
 {
@@ -14,7 +13,7 @@ final class PlayerId extends ValueObject
     public function __construct(string $value)
     {
         if (empty(trim($value))) {
-            throw new InvalidArgumentException('Player ID cannot be empty');
+            throw new \InvalidArgumentException('Player ID cannot be empty');
         }
 
         $this->value = $value;

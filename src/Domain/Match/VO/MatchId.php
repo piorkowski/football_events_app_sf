@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Domain\Match\VO;
 
 use App\Domain\Shared\ValueObject;
-use InvalidArgumentException;
 
 final class MatchId extends ValueObject
 {
@@ -14,7 +13,7 @@ final class MatchId extends ValueObject
     public function __construct(string $value)
     {
         if (empty(trim($value))) {
-            throw new InvalidArgumentException('Match ID cannot be empty');
+            throw new \InvalidArgumentException('Match ID cannot be empty');
         }
 
         $this->value = $value;

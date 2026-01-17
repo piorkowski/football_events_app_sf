@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Queue;
 
-use App\Application\Command\QueryBusInterface;
+use App\Application\Query\QueryBusInterface;
 use App\Infrastructure\Exception\QueryBusException;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Messenger\Exception\HandlerFailedException;
@@ -22,7 +22,7 @@ final class QueryBus implements QueryBusInterface
     ) {
     }
 
-    public function query(object $query): mixed
+    public function ask(object $query): mixed
     {
         try {
             return $this->handle($query);

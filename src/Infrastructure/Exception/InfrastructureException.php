@@ -4,6 +4,6 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Exception;
 
-class QueryBusException extends \Exception
+class InfrastructureException extends \Exception
 {
 }

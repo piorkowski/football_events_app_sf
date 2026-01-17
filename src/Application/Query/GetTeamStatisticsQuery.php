@@ -8,5 +8,7 @@ use App\UI\DTO\GetStatisticDTO;
 
 final class GetTeamStatisticsQuery implements QueryInterface
 {
-    public function __construct(public GetStatisticDTO $teamStatisticsDTO) {}
+    public function __construct(public GetStatisticDTO $teamStatisticsDTO)
+    {
+    }
 }

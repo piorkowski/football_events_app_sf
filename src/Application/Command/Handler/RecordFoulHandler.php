@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace App\Application\Command\Handler;
 
 use App\Application\Command\RecordFoulCommand;
-use App\Application\MessageBus\CommandHandlerInterface;
-use App\Application\MessageBus\EventBusInterface;
+use App\Application\Event\EventBusInterface;
 use App\Domain\Event\Foul;
 use App\Domain\Event\Repository\MatchEventRepositoryInterface;
 use App\Domain\Match\VO\MatchId;
@@ -22,8 +21,9 @@ final readonly class RecordFoulHandler
     public function __construct(
         private MatchEventRepositoryInterface $eventRepository,
         private StatisticsRepositoryInterface $statisticsRepository,
-        private EventBusInterface             $eventBus
-    ) {}
+        private EventBusInterface $eventBus,
+    ) {
+    }
 
     public function __invoke(RecordFoulCommand $command): Foul
     {
@@ -42,7 +42,7 @@ final readonly class RecordFoulHandler
         $matchId = new MatchId($command->eventDTO->matchId);
         $statistics = $this->statisticsRepository->findByMatchId($matchId);
 
-        if ($statistics === null) {
+        if (null === $statistics) {
             $statistics = new MatchStatistics($matchId);
         }
 

@@ -13,8 +13,6 @@ final class CreateMatchEventResponse extends JsonResponse
         parent::__construct($data, $status, $headers, $json);
     }
 
-
-
     public function __invoke(): string
     {
         try {

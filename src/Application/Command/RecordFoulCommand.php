@@ -13,6 +13,7 @@ class RecordFoulCommand implements CommandInterface
 {
     public function __construct(
         public MatchEventId $matchEventId,
-        public CommitEventDTO $eventDTO
-    ) {}
+        public CommitEventDTO $eventDTO,
+    ) {
+    }
 }

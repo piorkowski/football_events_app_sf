@@ -24,7 +24,7 @@ final readonly class GetStatisticsAction
 
     public function __invoke(
         #[MapRequestPayload] CommitEventDTO $eventDTO,
-        Request                             $request,
+        Request $request,
     ): JsonResponse {
         try {
             $this->commandBus->dispatch(new CreateOrderCommand($createOrderDTO, $request->getClientIp()));

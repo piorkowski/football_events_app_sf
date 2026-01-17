@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Application\Command\Handler;
@@ -16,8 +17,7 @@ final readonly class NotifyClientsHandler
         private LoggerInterface $logger,
         private NotificatorInterface $notificator,
         private ClientReadRepositoryInterface $clientReadRepository,
-    )
-    {
+    ) {
     }
 
     public function __invoke(NotifyClientsCommand $command): void
@@ -27,10 +27,10 @@ final readonly class NotifyClientsHandler
             foreach ($this->clientReadRepository->activeClientsForNotification() as $client) {
                 $this->logger->info('Notifying client {clientId}', ['clientId' => $client->getId()]);
                 $this->notificator->notify($client);
+                $this->logger->info('Client notified');
             }
         } catch (\Throwable $e) {
             $this->logger->error('Error notifying clients', ['exception' => $e]);
         }
     }
-
 }

@@ -9,9 +9,10 @@ use App\Domain\Client\VO\ClientId;
 class Client
 {
     public function __construct(
-        private ClientId $id,
-        private array    $notificaionData
-    ) {}
+        private readonly ClientId $id,
+        private array $notificationData = [],
+    ) {
+    }
 
     public function id(): ClientId
     {
@@ -20,11 +21,11 @@ class Client
 
     public function addNotificationData(ClientNotificationType $key, mixed $value): void
     {
-        $this->notificaionData[$key->value] = $value;
+        $this->notificationData[$key->value] = $value;
     }
 
     public function notificationData(): array
     {
-        return $this->notificaionData;
+        return $this->notificationData;
     }
 }

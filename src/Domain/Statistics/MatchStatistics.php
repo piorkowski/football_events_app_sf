@@ -11,8 +11,9 @@ final class MatchStatistics
 {
     public function __construct(
         private readonly MatchId $matchId,
-        private array            $teamStats = []
-    ) {}
+        private array $teamStats = [],
+    ) {
+    }
 
     public function incrementGoals(TeamId $teamId): void
     {
@@ -35,7 +36,7 @@ final class MatchStatistics
             ];
         }
 
-        $this->teamStats[$teamIdValue][$statType]++;
+        ++$this->teamStats[$teamIdValue][$statType];
     }
 
     public function getTeamStats(TeamId $teamId): array

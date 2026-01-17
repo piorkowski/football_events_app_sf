@@ -30,33 +30,35 @@ final readonly class CommitEventAction
 
     public function __invoke(
         #[MapRequestPayload] CommitEventDTO $eventDTO,
-        Request                             $request,
+        Request $request,
     ): JsonResponse {
         try {
             $this->logger->info('Committing event', ['event' => $eventDTO]);
             switch ($eventDTO->type) {
                 case 'goal':
-                {
                     $this->logger->info('Recording goal');
                     $matchEventId = $this->generateMatchEventId();
                     $this->commandBus->dispatch(new RecordGoalCommand($matchEventId, $eventDTO));
                     $this->logger->info('Goal recorded');
                     $this->queryBus->ask(new GetMatchEventQuery($matchEventId));
+
                     return new JsonResponse('Goal recorded!', Response::HTTP_CREATED);
-                }
-                case 'foul': {
+
+                case 'foul':
                     $this->logger->info('Recording foul');
                     $matchEventId = $this->generateMatchEventId();
                     $this->commandBus->dispatch(new RecordFoulCommand($matchEventId, $eventDTO));
                     $this->logger->info('Foul recorded');
                     $this->queryBus->ask(new GetMatchEventQuery($matchEventId));
-                }
+
+                    // no break
                 default:
                     $this->logger->info('Unknown event type - %', ['type' => $eventDTO->type]);
             }
-
         } catch (\Exception $exception) {
             $this->logger->error('Error committing event', ['exception' => $exception]);
+            dd($exception);
+
             return new JsonResponse('Error committing event', Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }

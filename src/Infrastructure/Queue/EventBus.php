@@ -6,8 +6,9 @@ namespace App\Infrastructure\Queue;
 
 use App\Application\Event\EventBusInterface;
 use App\Domain\Shared\Event\DomainEventInterface;
-use App\Infrastructure\Exception\QueryBusException;
+use App\Infrastructure\Exception\EventBusException;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Symfony\Component\Messenger\Exception\HandlerFailedException;
 use Symfony\Component\Messenger\HandleTrait;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -26,11 +27,11 @@ final class EventBus implements EventBusInterface
     public function dispatch(DomainEventInterface $event): void
     {
         try {
-            $this->dispatch($event);
-        } catch (HandlerFailedException $exception) {
+            $this->messageBus->dispatch($event);
+        } catch (HandlerFailedException | ExceptionInterface $exception) {
             $previous = $exception->getPrevious() ?? $exception;
 
-            throw new QueryBusException(message: $previous->getMessage(), code: $previous->getCode(), previous: $previous);
+            throw new EventBusException(message: $previous->getMessage(), code: $previous->getCode(), previous: $previous);
         }
     }
 }

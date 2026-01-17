@@ -6,7 +6,7 @@ namespace App\Application\Query;
 
 use App\Domain\MatchEvent\VO\MatchEventId;
 
-class GetMatchEventQuery implements QueryInterface
+final class GetMatchEventQuery implements QueryInterface
 {
     public function __construct(public MatchEventId $matchEventId)
     {

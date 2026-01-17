@@ -10,8 +10,8 @@ class GetStatisticDTO
 {
     public function __construct(
         #[Assert\NotBlank()]
-        public string $matchId,
-        public ?string $teamId,
+        public ?string $match_id,
+        public ?string $team_id,
     ) {
     }
 }

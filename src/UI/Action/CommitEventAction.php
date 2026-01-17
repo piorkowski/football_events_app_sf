@@ -42,8 +42,7 @@ final readonly class CommitEventAction
                     $this->commandBus->dispatch(new RecordGoalCommand($matchEventId, $eventDTO));
                     $this->logger->info('Goal recorded');
                     $goal = $this->queryBus->ask(new GetMatchEventQuery($matchEventId));
-
-                    return new JsonResponse($this->buildResponse($goal), Response::HTTP_CREATED);
+                    return $this->buildResponse($goal);
 
                 case 'foul':
                     $this->logger->info('Recording foul');
@@ -51,8 +50,7 @@ final readonly class CommitEventAction
                     $this->commandBus->dispatch(new RecordFoulCommand($matchEventId, $eventDTO));
                     $this->logger->info('Foul recorded');
                     $foul = $this->queryBus->ask(new GetMatchEventQuery($matchEventId));
-
-                    return new JsonResponse($this->buildResponse($foul), Response::HTTP_CREATED);
+                    return $this->buildResponse($foul);
                 default:
                     $this->logger->info('Unknown event type - %', ['type' => $eventDTO->type]);
             }
@@ -66,8 +64,6 @@ final readonly class CommitEventAction
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         } catch (\Exception $exception) {
             $this->logger->error('Error committing event', ['exception' => $exception]);
-            dd($exception);
-
             return new JsonResponse('Error committing event', Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
@@ -82,7 +78,7 @@ final readonly class CommitEventAction
         $data = json_encode([
             'status' => 'success',
             'message' => 'Event saved successfully',
-            'event' => $event,
+            'event' => $event->toArray(),
         ], JSON_THROW_ON_ERROR);
 
         return new JsonResponse($data, Response::HTTP_CREATED);

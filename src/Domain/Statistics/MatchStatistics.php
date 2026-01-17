@@ -11,8 +11,10 @@ final class MatchStatistics
 {
     public function __construct(
         private readonly MatchId $matchId,
-        private array $teamStats = [],
-    ) {
+        private array            $teamStats = [],
+        private readonly ?TeamId $teamId = null,
+    )
+    {
     }
 
     public function incrementGoals(TeamId $teamId): void
@@ -59,9 +61,17 @@ final class MatchStatistics
 
     public function toArray(): array
     {
+        if ($this->teamId) {
+            return [
+                'match_id' => $this->matchId->value(),
+                'team_id' => $this->teamId->value(),
+                'statistics' => $this->teamStats,
+            ];
+        }
+
         return [
             'match_id' => $this->matchId->value(),
-            'teams' => $this->teamStats,
+            'statistics' => $this->teamStats,
         ];
     }
 }

@@ -12,7 +12,7 @@ interface MatchEventRepositoryInterface
 {
     public function findByMatchId(MatchId $matchId): array;
 
-    public function findByMatchEventId(MatchEventId $matchId): MatchEvent;
+    public function findByMatchEventId(MatchEventId $matchId): ?MatchEvent;
 
     public function findAll(): array;
 }

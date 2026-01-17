@@ -8,7 +8,7 @@ use App\Domain\MatchEvent\VO\MatchEventId;
 use Symfony\Component\Messenger\Attribute\AsMessage;
 
 #[AsMessage]
-class NotifyClientsCommand implements CommandInterface
+final readonly class NotifyClientsCommand implements CommandInterface
 {
     public function __construct(
         public MatchEventId $matchEventId,

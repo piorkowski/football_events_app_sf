@@ -19,12 +19,12 @@ final readonly class GetMatchStatisticsHandler
 
     public function __invoke(GetMatchStatisticsQuery $query): array
     {
-        $matchId = new MatchId($query->matchStatisticsDTO->matchId);
+        $matchId = new MatchId($query->matchStatisticsDTO->match_id);
         $statistics = $this->statisticsRepository->findByMatchId($matchId);
 
         if (null === $statistics) {
             return [
-                'match_id' => $query->matchStatisticsDTO->matchId,
+                'match_id' => $query->matchStatisticsDTO->match_id,
                 'teams' => [],
             ];
         }

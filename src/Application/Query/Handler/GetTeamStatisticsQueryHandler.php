@@ -11,7 +11,7 @@ use App\Domain\Team\VO\TeamId;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
-readonly class GetTeamStatisticsQueryHandler
+final readonly class GetTeamStatisticsQueryHandler
 {
     public function __construct(private StatisticsRepositoryInterface $statisticsRepository)
     {
@@ -19,14 +19,15 @@ readonly class GetTeamStatisticsQueryHandler
 
     public function __invoke(GetTeamStatisticsQuery $query): array
     {
-        $teamId = new TeamId($query->teamStatisticsDTO->teamId);
-        $matchId = new MatchId($query->teamStatisticsDTO->matchId);
+        $teamId = new TeamId($query->teamStatisticsDTO->team_id);
+        $matchId = new MatchId($query->teamStatisticsDTO->match_id);
         $statistics = $this->statisticsRepository->findForTeamByMatchId($teamId, $matchId);
 
         if (null === $statistics) {
             return [
-                'match_id' => $query->teamStatisticsDTO->matchId,
-                'teams' => [],
+                'match_id' => $query->teamStatisticsDTO->match_id,
+                'team_id' => $query->teamStatisticsDTO->team_id,
+                'stats' => [],
             ];
         }
 

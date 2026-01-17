@@ -7,15 +7,16 @@ use App\Domain\Statistics\MatchStatistics;
 use App\Domain\Statistics\StatisticsProjectionRepositoryInterface;
 use App\Domain\Statistics\StatisticsRepositoryInterface;
 use App\Domain\Team\VO\TeamId;
+use App\Infrastructure\Exception\InfrastructureException;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
-final class FileStatisticsRepository implements StatisticsRepositoryInterface, StatisticsProjectionRepositoryInterface
+final readonly class FileStatisticsRepository implements StatisticsRepositoryInterface, StatisticsProjectionRepositoryInterface
 {
     public function __construct(
         #[Autowire(env: 'STATISTICS_FILENAME')]
-        private readonly string $filePath,
+        private string $filePath,
     ) {
-        $this->ensureDirectoryExists();
+        $this->ensureFileExists();
     }
 
     public function save(MatchStatistics $statistics): void
@@ -66,14 +67,6 @@ final class FileStatisticsRepository implements StatisticsRepositoryInterface, S
         return json_decode($content, true) ?? [];
     }
 
-    private function ensureDirectoryExists(): void
-    {
-        $directory = dirname($this->filePath);
-        if (!is_dir($directory)) {
-            mkdir($directory, 0o777, true);
-        }
-    }
-
     public function findForTeamByMatchId(TeamId $teamId, MatchId $matchId): ?MatchStatistics
     {
         $allStats = $this->loadAll();
@@ -82,18 +75,31 @@ final class FileStatisticsRepository implements StatisticsRepositoryInterface, S
             return null;
         }
 
-        $statistics = new MatchStatistics($matchId);
+        $statistics = new MatchStatistics($matchId, $allStats[$matchId->value()][$teamId->value()], $teamId);
 
-        foreach ($allStats[$matchId->value()][$teamId->value()] as $stats) {
-            for ($i = 0; $i < ($stats['goals'] ?? 0); ++$i) {
-                $statistics->incrementGoals($teamId);
-            }
 
-            for ($i = 0; $i < ($stats['fouls'] ?? 0); ++$i) {
-                $statistics->incrementFouls($teamId);
+        return $statistics;
+    }
+
+    private function ensureFileExists(): void
+    {
+        $directory = dirname($this->filePath);
+
+        if (!is_dir($directory)) {
+            if (!mkdir($directory, 0755, true) && !is_dir($directory)) {
+                throw new InfrastructureException("Failed to create directory: {$directory}");
             }
         }
 
-        return $statistics;
+        if (!file_exists($this->filePath)) {
+            if (file_put_contents($this->filePath, '{}') === false) {
+                throw new InfrastructureException("Failed to create file: {$this->filePath}");
+            }
+            chmod($this->filePath, 0644);
+        }
+
+        if (!is_writable($this->filePath)) {
+            throw new InfrastructureException("File is not writable: {$this->filePath}");
+        }
     }
 }

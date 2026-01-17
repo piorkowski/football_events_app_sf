@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\MatchEvent\Validator;
 
 use App\Domain\MatchEvent\EventType;
+use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
 #[AutoconfigureTag('match_event.validator')]
 final class GoalDataValidator implements MatchEventDataValidatorInterface

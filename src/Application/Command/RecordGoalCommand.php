@@ -9,7 +9,7 @@ use App\UI\DTO\CommitEventDTO;
 use Symfony\Component\Messenger\Attribute\AsMessage;
 
 #[AsMessage]
-class RecordGoalCommand implements CommandInterface
+final readonly class RecordGoalCommand implements CommandInterface
 {
     public function __construct(
         public MatchEventId $matchEventId,

@@ -22,7 +22,7 @@ final class Foul extends MatchEvent
         public int $second,
         public ?\DateTimeInterface $timestamp = new \DateTimeImmutable(),
     ) {
-        parent::__construct($id, $matchId, $teamId, $minute, $this->second, $timestamp);
+        parent::__construct($id, $matchId, $teamId, $minute, $second, $timestamp);
 
         $this->raise(new FoulCommittedEvent($id, $matchId, $teamId));
     }

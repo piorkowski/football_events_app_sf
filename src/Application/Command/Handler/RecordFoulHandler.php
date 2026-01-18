@@ -11,6 +11,7 @@ use App\Application\Factory\MatchEventFactoryInterface;
 use App\Application\Validator\MatchEventValidatorInterface;
 use App\Domain\Match\VO\MatchId;
 use App\Domain\MatchEvent\Foul;
+use App\Domain\MatchEvent\Repository\MatchEventProjectionRepositoryInterface;
 use App\Domain\MatchEvent\Repository\MatchEventRepositoryInterface;
 use App\Domain\Player\VO\PlayerId;
 use App\Domain\Shared\Event\DomainEventDispatcherInterface;
@@ -21,7 +22,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 final readonly class RecordFoulHandler
 {
     public function __construct(
-        private MatchEventRepositoryInterface $eventRepository,
+        private MatchEventProjectionRepositoryInterface $eventProjectionRepository,
         private MatchEventValidatorInterface $validator,
         private MatchEventFactoryInterface $factory,
         private DomainEventDispatcherInterface $eventDispatcher,
@@ -38,14 +39,14 @@ final readonly class RecordFoulHandler
                 matchId: new MatchId($command->eventDTO->data['match_id']),
                 teamId: new TeamId($command->eventDTO->data['team_id']),
                 committedBy: new PlayerId($command->eventDTO->data['committedBy'] ?? $command->eventDTO->data['player']),
-                sufferedBy: isset($command->eventDTO->data['sufferedBy'])
-                    ? new PlayerId($command->eventDTO->data['sufferedBy'])
+                sufferedBy: isset($command->eventDTO->data['suffered_by'])
+                    ? new PlayerId($command->eventDTO->data['suffered_by'])
                     : null,
                 minute: $command->eventDTO->data['minute'],
                 second: $command->eventDTO->data['second']
             );
 
-            $this->eventRepository->save($foul);
+            $this->eventProjectionRepository->save($foul);
             $this->eventDispatcher->dispatchAll($foul->pullDomainEvents());
 
             return $foul;

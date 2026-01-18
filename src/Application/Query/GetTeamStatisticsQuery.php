@@ -6,7 +6,7 @@ namespace App\Application\Query;
 
 use App\UI\DTO\GetStatisticDTO;
 
-final readonly  class GetTeamStatisticsQuery implements QueryInterface
+final readonly class GetTeamStatisticsQuery implements QueryInterface
 {
     public function __construct(public GetStatisticDTO $teamStatisticsDTO)
     {

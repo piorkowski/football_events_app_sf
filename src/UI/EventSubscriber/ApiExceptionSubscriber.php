@@ -39,6 +39,7 @@ class ApiExceptionSubscriber implements EventSubscriberInterface
             // Invalid JSON
             if ($previous instanceof NotEncodableValueException) {
                 $event->setResponse($this->jsonError('Invalid JSON'));
+
                 return;
             }
 
@@ -46,11 +47,13 @@ class ApiExceptionSubscriber implements EventSubscriberInterface
             if ($previous instanceof ValidationFailedException) {
                 $errors = $this->extractValidationErrors($previous);
                 $event->setResponse($this->jsonError($errors['message'], $errors['details']));
+
                 return;
             }
 
             // Generic bad request
             $event->setResponse($this->jsonError($exception->getMessage()));
+
             return;
         }
 
@@ -58,12 +61,14 @@ class ApiExceptionSubscriber implements EventSubscriberInterface
         if ($exception instanceof ValidationFailedException) {
             $errors = $this->extractValidationErrors($exception);
             $event->setResponse($this->jsonError($errors['message'], $errors['details']));
+
             return;
         }
 
         // Handle JSON syntax errors
         if ($exception instanceof \JsonException) {
             $event->setResponse($this->jsonError('Invalid JSON'));
+
             return;
         }
     }
@@ -108,7 +113,7 @@ class ApiExceptionSubscriber implements EventSubscriberInterface
         // Check for specific field errors and return expected messages
         if (isset($details['type']) || in_array('This value should not be blank.', $messages, true)) {
             foreach ($details as $field => $message) {
-                if ($field === 'type') {
+                if ('type' === $field) {
                     return 'Event type is required';
                 }
             }

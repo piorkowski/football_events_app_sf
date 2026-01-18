@@ -11,10 +11,9 @@ final class MatchStatistics
 {
     public function __construct(
         private readonly MatchId $matchId,
-        private array            $teamStats = [],
+        private array $teamStats = [],
         private readonly ?TeamId $teamId = null,
-    )
-    {
+    ) {
     }
 
     public function incrementGoals(TeamId $teamId): void

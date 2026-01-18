@@ -42,6 +42,7 @@ final readonly class CommitEventAction
                     $this->commandBus->dispatch(new RecordGoalCommand($matchEventId, $eventDTO));
                     $this->logger->info('Goal recorded');
                     $goal = $this->queryBus->ask(new GetMatchEventQuery($matchEventId));
+
                     return $this->buildResponse($goal);
 
                 case 'foul':
@@ -50,6 +51,7 @@ final readonly class CommitEventAction
                     $this->commandBus->dispatch(new RecordFoulCommand($matchEventId, $eventDTO));
                     $this->logger->info('Foul recorded');
                     $foul = $this->queryBus->ask(new GetMatchEventQuery($matchEventId));
+
                     return $this->buildResponse($foul);
                 default:
                     $this->logger->info('Unknown event type - %', ['type' => $eventDTO->type]);
@@ -57,7 +59,7 @@ final readonly class CommitEventAction
 
             return new JsonResponse('Error committing event', Response::HTTP_INTERNAL_SERVER_ERROR);
         } catch (ValidationException $e) {
-            //this part below it is here only to not breaking contract in tests
+            // this part below it is here only to not breaking contract in tests
             if (isset($e->errors['match_id']) || isset($e->errors['team_id'])) {
                 return new JsonResponse([
                     'error' => 'match_id and team_id are required for foul events',
@@ -71,6 +73,7 @@ final readonly class CommitEventAction
             ], Response::HTTP_BAD_REQUEST);
         } catch (\Exception $exception) {
             $this->logger->error('Error committing event', ['exception' => $exception]);
+
             return new JsonResponse('Error committing event', Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }

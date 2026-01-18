@@ -77,7 +77,6 @@ final readonly class FileStatisticsRepository implements StatisticsRepositoryInt
 
         $statistics = new MatchStatistics($matchId, $allStats[$matchId->value()][$teamId->value()], $teamId);
 
-
         return $statistics;
     }
 
@@ -92,7 +91,7 @@ final readonly class FileStatisticsRepository implements StatisticsRepositoryInt
         }
 
         if (!file_exists($this->filePath)) {
-            if (file_put_contents($this->filePath, '{}') === false) {
+            if (false === file_put_contents($this->filePath, '{}')) {
                 throw new InfrastructureException("Failed to create file: {$this->filePath}");
             }
             chmod($this->filePath, 0644);

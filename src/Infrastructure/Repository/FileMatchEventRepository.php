@@ -29,7 +29,7 @@ final readonly class FileMatchEventRepository implements MatchEventRepositoryInt
     public function save(MatchEvent $event): void
     {
         $data = $event->toArray();
-        $line = json_encode($data, JSON_THROW_ON_ERROR) . PHP_EOL;
+        $line = json_encode($data, JSON_THROW_ON_ERROR).PHP_EOL;
 
         file_put_contents($this->filePath, $line, FILE_APPEND | LOCK_EX);
     }
@@ -43,7 +43,7 @@ final readonly class FileMatchEventRepository implements MatchEventRepositoryInt
 
         return array_values(array_filter(
             $allEvents,
-            static fn(MatchEvent $event) => $event->matchId()->equals($matchId)
+            static fn (MatchEvent $event) => $event->matchId()->equals($matchId)
         ));
     }
 
@@ -65,6 +65,7 @@ final readonly class FileMatchEventRepository implements MatchEventRepositoryInt
 
     /**
      * @return MatchEvent[]
+     *
      * @throws InfrastructureException
      */
     public function findAll(): array
@@ -110,7 +111,7 @@ final readonly class FileMatchEventRepository implements MatchEventRepositoryInt
                 EventType::FOUL => $this->hydrateFoul($data),
             };
         } catch (\Throwable $e) {
-            throw new InfrastructureException('Unable to hydrate event: ' . $e->getMessage(), 0, $e);
+            throw new InfrastructureException('Unable to hydrate event: '.$e->getMessage(), 0, $e);
         }
     }
 
@@ -153,7 +154,7 @@ final readonly class FileMatchEventRepository implements MatchEventRepositoryInt
         }
 
         if (!file_exists($this->filePath)) {
-            if (touch($this->filePath) === false) {
+            if (false === touch($this->filePath)) {
                 throw new InfrastructureException("Failed to create file: {$this->filePath}");
             }
             chmod($this->filePath, 0644);

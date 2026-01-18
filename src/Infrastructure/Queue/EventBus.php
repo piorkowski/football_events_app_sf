@@ -28,7 +28,7 @@ final class EventBus implements EventBusInterface
     {
         try {
             $this->messageBus->dispatch($event);
-        } catch (HandlerFailedException | ExceptionInterface $exception) {
+        } catch (HandlerFailedException|ExceptionInterface $exception) {
             $previous = $exception->getPrevious() ?? $exception;
 
             throw new EventBusException(message: $previous->getMessage(), code: $previous->getCode(), previous: $previous);

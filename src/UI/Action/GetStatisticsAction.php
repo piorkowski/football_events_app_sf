@@ -32,25 +32,25 @@ final readonly class GetStatisticsAction
                 'team_id' => $dto->team_id,
             ]);
 
-            if ($dto->team_id !== null) {
+            if (null !== $dto->team_id) {
                 $statistics = $this->queryBus->ask(new GetTeamStatisticsQuery($dto));
+
                 return new JsonResponse([
                     'match_id' => $dto->match_id,
                     'team_id' => $dto->team_id,
                     'statistics' => $statistics,
                 ]);
-
             } else {
                 $statistics = $this->queryBus->ask(new GetMatchStatisticsQuery($dto));
+
                 return new JsonResponse([
                     'match_id' => $dto->match_id,
                     'statistics' => $statistics,
                 ]);
             }
-
-
         } catch (\Exception $exception) {
             $this->logger->error('Error getting statistics', ['exception' => $exception->getMessage()]);
+
             return new JsonResponse(
                 ['status' => 'error', 'message' => 'Error getting statistics'],
                 Response::HTTP_INTERNAL_SERVER_ERROR

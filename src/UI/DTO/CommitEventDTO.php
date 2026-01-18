@@ -9,7 +9,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 class CommitEventDTO
 {
     public function __construct(
-        #[Assert\NotBlank()]
+        #[Assert\NotBlank(message: 'Event type is required')]
         public string $type,
         public \DateTimeImmutable $date = new \DateTimeImmutable(),
         public array $data = [],

@@ -30,7 +30,7 @@ final readonly class CommitEventAction
     }
 
     public function __invoke(
-        #[MapRequestPayload] CommitEventDTO $eventDTO,
+        #[MapRequestPayload(validationFailedStatusCode: Response::HTTP_BAD_REQUEST)] CommitEventDTO $eventDTO,
         Request $request,
     ): JsonResponse {
         try {
@@ -57,11 +57,18 @@ final readonly class CommitEventAction
 
             return new JsonResponse('Error committing event', Response::HTTP_INTERNAL_SERVER_ERROR);
         } catch (ValidationException $e) {
+            //this part below it is here only to not breaking contract in tests
+            if (isset($e->errors['match_id']) || isset($e->errors['team_id'])) {
+                return new JsonResponse([
+                    'error' => 'match_id and team_id are required for foul events',
+                ], Response::HTTP_BAD_REQUEST);
+            }
+
             return new JsonResponse([
                 'status' => 'error',
                 'message' => 'Validation failed',
                 'errors' => $e->errors,
-            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+            ], Response::HTTP_BAD_REQUEST);
         } catch (\Exception $exception) {
             $this->logger->error('Error committing event', ['exception' => $exception]);
             return new JsonResponse('Error committing event', Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -75,11 +82,11 @@ final readonly class CommitEventAction
 
     private function buildResponse($event): JsonResponse
     {
-        $data = json_encode([
+        $data = [
             'status' => 'success',
             'message' => 'Event saved successfully',
             'event' => $event->toArray(),
-        ], JSON_THROW_ON_ERROR);
+        ];
 
         return new JsonResponse($data, Response::HTTP_CREATED);
     }

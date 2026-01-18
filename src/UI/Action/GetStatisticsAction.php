@@ -24,7 +24,7 @@ final readonly class GetStatisticsAction
     }
 
     public function __invoke(
-        #[MapQueryString] GetStatisticDTO $dto,
+        #[MapQueryString(validationFailedStatusCode: Response::HTTP_BAD_REQUEST)] GetStatisticDTO $dto,
     ): JsonResponse {
         try {
             $this->logger->info('Getting statistics', [
@@ -34,17 +34,23 @@ final readonly class GetStatisticsAction
 
             if ($dto->team_id !== null) {
                 $statistics = $this->queryBus->ask(new GetTeamStatisticsQuery($dto));
+                return new JsonResponse([
+                    'match_id' => $dto->match_id,
+                    'team_id' => $dto->team_id,
+                    'statistics' => $statistics,
+                ]);
+
             } else {
                 $statistics = $this->queryBus->ask(new GetMatchStatisticsQuery($dto));
+                return new JsonResponse([
+                    'match_id' => $dto->match_id,
+                    'statistics' => $statistics,
+                ]);
             }
 
-            return new JsonResponse([
-                'status' => 'success',
-                'data' => $statistics,
-            ]);
+
         } catch (\Exception $exception) {
             $this->logger->error('Error getting statistics', ['exception' => $exception->getMessage()]);
-            dd($exception);
             return new JsonResponse(
                 ['status' => 'error', 'message' => 'Error getting statistics'],
                 Response::HTTP_INTERNAL_SERVER_ERROR

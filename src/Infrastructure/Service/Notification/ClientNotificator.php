@@ -19,5 +19,7 @@ class ClientNotificator implements NotificatorInterface
 
     public function notify(Client $client): void
     {
+        $this->logger->info('Notifying client {clientId}', ['clientId' => $client->id()->value()]);
+
     }
 }

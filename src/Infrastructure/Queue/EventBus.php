@@ -18,9 +18,8 @@ final class EventBus implements EventBusInterface
     use HandleTrait;
 
     public function __construct(
-        /** @phpstan-ignore-next-line  */
         #[Autowire(service: 'event.bus')]
-        private MessageBusInterface $messageBus,
+        private readonly MessageBusInterface $messageBus,
     ) {
     }
 

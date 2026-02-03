@@ -19,7 +19,7 @@ class Client
         return $this->id;
     }
 
-    public function addNotificationData(ClientNotificationType $key, mixed $value): void
+    public function addNotificationData(ClientNotificationType $key, string $value): void
     {
         $this->notificationData[$key->value] = $value;
     }

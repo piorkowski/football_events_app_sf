@@ -16,9 +16,8 @@ final class QueryBus implements QueryBusInterface
     use HandleTrait;
 
     public function __construct(
-        /** @phpstan-ignore-next-line  */
         #[Autowire(service: 'query.bus.statistics')]
-        private MessageBusInterface $messageBus,
+        private readonly MessageBusInterface $messageBus,
     ) {
     }
 

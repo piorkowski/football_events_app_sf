@@ -6,14 +6,13 @@ use Tests\Support\ApiTester;
 
 class StatisticsApiCest
 {
-    public function _before(ApiTester $I)
+    public function _before(ApiTester $I): void
     {
-        // Clean up storage files before each test
         $I->deleteFile('storage/events.txt');
         $I->deleteFile('storage/statistics.txt');
     }
 
-    public function testGetTeamStatistics(ApiTester $I)
+    public function testGetTeamStatistics(ApiTester $I): void
     {
         // First, create some foul events
         $I->haveHttpHeader('Content-Type', 'application/json');
@@ -50,9 +49,8 @@ class StatisticsApiCest
         ]);
     }
 
-    public function testGetMatchStatistics(ApiTester $I)
+    public function testGetMatchStatistics(ApiTester $I): void
     {
-        // Create foul events for different teams
         $I->haveHttpHeader('Content-Type', 'application/json');
         $I->sendPOST('/event', [
             'type' => 'foul',
@@ -73,7 +71,6 @@ class StatisticsApiCest
             'second' => 33,
         ]);
 
-        // Get all match statistics
         $I->sendGET('/statistics?match_id=m1');
 
         $I->seeResponseCodeIs(200);
@@ -91,7 +88,7 @@ class StatisticsApiCest
         ]);
     }
 
-    public function testGetStatisticsWithoutMatchId(ApiTester $I)
+    public function testGetStatisticsWithoutMatchId(ApiTester $I): void
     {
         $I->sendGET('/statistics');
 
@@ -102,7 +99,7 @@ class StatisticsApiCest
         ]);
     }
 
-    public function testGetStatisticsForNonExistentTeam(ApiTester $I)
+    public function testGetStatisticsForNonExistentTeam(ApiTester $I): void
     {
         $I->sendGET('/statistics?match_id=m1&team_id=nonexistent');
 
@@ -115,7 +112,7 @@ class StatisticsApiCest
         ]);
     }
 
-    public function testGetStatisticsForNonExistentMatch(ApiTester $I)
+    public function testGetStatisticsForNonExistentMatch(ApiTester $I): void
     {
         $I->sendGET('/statistics?match_id=nonexistent');
 

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Tests\Unit;
 
@@ -14,8 +15,8 @@ class EventHandlerTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->testFile = sys_get_temp_dir().'/test_events_'.uniqid().'.txt';
-        $this->testStatsFile = sys_get_temp_dir().'/test_stats_'.uniqid().'.txt';
+        $this->testFile = sys_get_temp_dir() . '/test_events_' . uniqid('', true) . '.txt';
+        $this->testStatsFile = sys_get_temp_dir() . '/test_stats_' . uniqid('', true) . '.txt';
     }
 
     protected function tearDown(): void
@@ -90,11 +91,9 @@ class EventHandlerTest extends TestCase
 
         $result = $handler->handleEvent($eventData);
 
-        // Check that event was saved successfully
         $this->assertEquals('success', $result['status']);
         $this->assertEquals('foul', $result['event']['type']);
 
-        // Check that statistics were updated
         $teamStats = $statisticsManager->getTeamStatistics('m1', 'arsenal');
         $this->assertArrayHasKey('fouls', $teamStats);
         $this->assertEquals(1, $teamStats['fouls']);
@@ -126,7 +125,6 @@ class EventHandlerTest extends TestCase
         $handler->handleEvent($eventData1);
         $handler->handleEvent($eventData2);
 
-        // Check that statistics were incremented correctly
         $teamStats = $statisticsManager->getTeamStatistics('match_1', 'team_a');
         $this->assertEquals(2, $teamStats['fouls']);
     }
@@ -144,7 +142,6 @@ class EventHandlerTest extends TestCase
             'player' => 'John Doe',
             'minute' => 45,
             'second' => 34,
-            // Missing match_id and team_id
         ];
 
         $handler->handleEvent($eventData);

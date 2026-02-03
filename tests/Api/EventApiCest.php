@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Tests\Api;
 
@@ -6,14 +7,13 @@ use Tests\Support\ApiTester;
 
 class EventApiCest
 {
-    public function _before(ApiTester $I)
+    public function _before(ApiTester $I): void
     {
-        // Clean up storage files before each test
         $I->deleteFile('storage/events.txt');
         $I->deleteFile('storage/statistics.txt');
     }
 
-    public function testFoulEvent(ApiTester $I)
+    public function testFoulEvent(ApiTester $I): void
     {
         $I->haveHttpHeader('Content-Type', 'application/json');
         $I->sendPOST('/event', [
@@ -34,7 +34,7 @@ class EventApiCest
         $I->seeResponseJsonMatchesJsonPath('$.event.type', 'foul');
     }
 
-    public function testFoulEventWithoutRequiredFields(ApiTester $I)
+    public function testFoulEventWithoutRequiredFields(ApiTester $I): void
     {
         $I->haveHttpHeader('Content-Type', 'application/json');
         $I->sendPOST('/event', [
@@ -42,7 +42,6 @@ class EventApiCest
             'player' => 'William Saliba',
             'minute' => 45,
             'second' => 34,
-            // Missing team_id and match_id
         ]);
 
         $I->seeResponseCodeIs(400);
